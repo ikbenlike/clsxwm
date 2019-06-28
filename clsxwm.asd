@@ -1,4 +1,4 @@
-;;;; ..asd
+;;;; clsxwm.asd
 
 (asdf:defsystem #:clsxwm
   :description "Describe . here"
@@ -8,4 +8,9 @@
   :serial t
   :depends-on (#:clx)
   :components ((:file "package")
-               (:file "clsxwm")))
+               (:file "display")
+               (:file "define-event-handlers")
+               (:file "event-handlers")
+               (:file "clsxwm")
+               (:file "key-codes")
+               (:file "log")))
