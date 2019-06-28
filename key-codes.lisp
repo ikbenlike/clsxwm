@@ -3,19 +3,20 @@
 ;(defvar codes-to-keys (make-hash-table))
 ;(defvar keys-to-codes (make-hash-table :test #'equal))
 
-(let ((codes-to-keys (make-hash-table))
-      (keys-to-codes (make-hash-table :test #'equal)))
-  (defun define-code (code key)
-    (assert (typep code 'number))
-    (assert (typep key 'string))
-    (setf (gethash code codes-to-keys) key
-          (gethash key keys-to-codes) code))
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (let ((codes-to-keys (make-hash-table))
+        (keys-to-codes (make-hash-table :test #'equal)))
+    (defun define-code (code key)
+      (check-type code number)
+      (check-type key string)
+      (setf (gethash code codes-to-keys) key
+            (gethash key keys-to-codes) code))
   
-  (defun key-to-code (key)
-    (gethash key keys-to-codes))
+    (defun key-to-code (key)
+      (gethash key keys-to-codes))
   
-  (defun code-to-key (code)
-    (gethash code codes-to-keys)))
+    (defun code-to-key (code)
+      (gethash code codes-to-keys))))
 
 (defmacro define-code-mappings (&body body)
   (loop :for x :in body
