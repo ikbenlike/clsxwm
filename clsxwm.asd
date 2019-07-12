@@ -13,4 +13,6 @@
                (:file "event-handlers")
                (:file "clsxwm")
                (:file "key-codes")
+               (:file "keyboard")
+               (:file "kbd-parse")
                (:file "log")))
