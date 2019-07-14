@@ -104,25 +104,26 @@
       (nreverse tokens)))
 
 (defun kbd-tokenize (s &aux
-                        (l (length s))
-                        (acc (make-array 0 :element-type 'character :adjustable t :fill-pointer 0)))
-  (labels
-      ((rec (acc tokens i)
-         (if (< i l)
-             (let ((c (char s i)))
-               (case c
-                 (#\space
-                  (if (empty-string-p acc)
-                      (rec acc tokens (1+ i))
-                      (rec acc (acc->tokens acc tokens) (1+ i))))
-                 (#\-
-                  (if (empty-string-p acc)
-                      (rec (c->acc c acc) tokens (1+ i))
-                      (rec acc (acc->tokens (c->acc c acc) tokens) (1+ i))))
-                 (otherwise
-                  (rec (c->acc c acc) tokens (1+ i)))))
-             (finalize-tokens acc tokens))))
-    (rec acc '() 0)))
+                        (acc (make-array 0 :element-type 'character :adjustable t :fill-pointer 0))
+                        (tokens '()))
+  (loop :for c character :across s
+        :if (char= c #\space)
+          :if (not (empty-string-p acc))
+            :do (setf tokens (acc->tokens acc tokens))
+          :else
+            :do (setf tokens (acc->tokens acc tokens))
+          :end
+        :else
+          :if (char= c #\-)
+            :if (empty-string-p acc)
+              :do (c->acc c acc)
+            :else
+              :do (setf tokens (acc->tokens (c->acc c acc) tokens))
+            :end
+          :else
+            :do (c->acc c acc)
+          :end
+        :finally (return (finalize-tokens acc tokens))))
 
 (defun kbd-parse (bind)
   (let ((meta nil) (super nil)
